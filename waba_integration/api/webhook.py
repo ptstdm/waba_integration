@@ -26,7 +26,10 @@ def handle():
 			process_status_update(status)
 
 		for message in messages:
-			create_waba_whatsapp_message(message)
+			# find if a WABA WhatsApp Message with Message ID exists in the system
+			# if not, create a new WABA WhatsApp Message
+			if frappe.db.exists("WABA WhatsApp Message", {"id": message.get("id")}):
+				create_waba_whatsapp_message(message)
 
 		
 	except Exception:
