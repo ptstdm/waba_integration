@@ -38,6 +38,7 @@ def handle():
 			{"doctype": "WABA Webhook Log", "payload": frappe.as_json(form_dict)}
 		).insert(ignore_permissions=True)
 		frappe.log_error("WABA Webhook Log Error", frappe.get_traceback())
+		frappe.log_error("Log From IDML", frappe.as_json(form_dict))
 		frappe.throw("Something went wrong")
 
 
