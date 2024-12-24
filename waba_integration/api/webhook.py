@@ -27,8 +27,14 @@ def handle():
 
 		for message in messages:
 			# find if a WABA WhatsApp Message with Message ID exists in the system
-			# if not, create a new WABA WhatsApp Message
-			if not frappe.db.exists("WABA WhatsApp Message", {"id": message.get("id")}) and (not message.get("errors") or message.get("errors")[0].get("code") != 131051):
+			if frappe.db.exists("WABA WhatsApp Message", {"id": message.get("id")}): # if already exists, then skip the message
+				continue
+			elif  message.get("errors") and message.get("errors")[0].get("code") == 131051: # if got an error code 131051, then skip the message
+				continue
+			elif message.get("type") not in ['text', 'image', 'audio', 'video', 'system', 'document']: # if got a reaction or any unsupported message type, then skip the message
+				frappe.log_error("Log From IDML,Ignoring this Message Because Unsupported Message Type", frappe.as_json(message))
+				continue
+			else: # else create a new WABA WhatsApp Message
 				create_waba_whatsapp_message(message)
 
 		
