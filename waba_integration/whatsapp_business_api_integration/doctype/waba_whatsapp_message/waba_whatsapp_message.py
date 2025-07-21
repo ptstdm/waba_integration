@@ -85,12 +85,14 @@ class WABAWhatsAppMessage(Document):
 		)
 
 		if response.ok:
-			self.id = response.json().get("messages")[0]["id"]
+			response = response.json()
+			self.id = response.get("messages")[0]["id"]
 			self.status = "Sent"
 			self.save(ignore_permissions=True)
-			return response.json()
+			return response
 		else:
-			frappe.throw(response.json().get("error").get("message"))
+			response = response.json()
+			frappe.log_error(f"Not received OK response from WhatsApp API for message sending to {self.to}", f"{str(response)}")
 
 	@frappe.whitelist()
 	def download_media(self) -> Dict:
